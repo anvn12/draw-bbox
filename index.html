@@ -8,8 +8,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h2>BBox Visualizer</h2>
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>BBox Visualizer</h2>
+                <button id="closeSidebar" class="icon-btn" title="Close Sidebar">✖</button>
+            </div>
             
             <div class="iou-display">
                 IoU: <span id="iouValue">0.0000</span>
@@ -47,54 +50,42 @@
                 </select>
             </div>
 
+            <div class="style-controls">
+                <div class="form-group">
+                    <label>Border Thickness: <span id="valThickness">2</span>px</label>
+                    <input type="range" id="borderThickness" min="1" max="15" value="2">
+                </div>
+                <div class="form-group">
+                    <label>Fill Opacity: <span id="valOpacity">0.2</span></label>
+                    <input type="range" id="fillOpacity" min="0" max="1" step="0.05" value="0.2">
+                </div>
+            </div>
+
             <hr>
 
             <h3 class="box-title green-text">Box 1 (Ground Truth / Green)</h3>
             <div class="coord-inputs">
-                <div class="form-group">
-                    <label id="lbl1">x1:</label>
-                    <input type="number" id="val1" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl2">y1:</label>
-                    <input type="number" id="val2" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl3">x2:</label>
-                    <input type="number" id="val3" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl4">y2:</label>
-                    <input type="number" id="val4" step="any" value="0">
-                </div>
+                <div class="form-group"><label id="lbl1">x1:</label><input type="number" id="val1" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl2">y1:</label><input type="number" id="val2" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl3">x2:</label><input type="number" id="val3" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl4">y2:</label><input type="number" id="val4" step="any" value="0"></div>
             </div>
 
             <hr>
 
             <h3 class="box-title blue-text">Box 2 (Prediction / Blue)</h3>
             <div class="coord-inputs">
-                <div class="form-group">
-                    <label id="lbl5">x1:</label>
-                    <input type="number" id="val5" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl6">y1:</label>
-                    <input type="number" id="val6" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl7">x2:</label>
-                    <input type="number" id="val7" step="any" value="0">
-                </div>
-                <div class="form-group">
-                    <label id="lbl8">y2:</label>
-                    <input type="number" id="val8" step="any" value="0">
-                </div>
+                <div class="form-group"><label id="lbl5">x1:</label><input type="number" id="val5" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl6">y1:</label><input type="number" id="val6" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl7">x2:</label><input type="number" id="val7" step="any" value="0"></div>
+                <div class="form-group"><label id="lbl8">y2:</label><input type="number" id="val8" step="any" value="0"></div>
             </div>
 
             <p id="imageInfo" class="info-text">Image Size: N/A</p>
         </div>
 
         <div class="main-content">
+            <button id="openSidebar" class="floating-btn" title="Open Menu">☰</button>
             <div class="canvas-container" id="canvasContainer">
                 <canvas id="canvas"></canvas>
             </div>
