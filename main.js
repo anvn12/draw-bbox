@@ -17,6 +17,7 @@ const borderThickness1 = document.getElementById('borderThickness1');
 const fillOpacity1 = document.getElementById('fillOpacity1');
 const valThickness1 = document.getElementById('valThickness1');
 const valOpacity1 = document.getElementById('valOpacity1');
+const paste1 = document.getElementById('paste1'); // NEW
 
 // Box 2 Config Elements
 const scaleSelect2 = document.getElementById('scaleSelect2');
@@ -25,6 +26,7 @@ const borderThickness2 = document.getElementById('borderThickness2');
 const fillOpacity2 = document.getElementById('fillOpacity2');
 const valThickness2 = document.getElementById('valThickness2');
 const valOpacity2 = document.getElementById('valOpacity2');
+const paste2 = document.getElementById('paste2'); // NEW
 
 // Zoom elements
 const btnZoomIn = document.getElementById('btnZoomIn');
@@ -42,6 +44,28 @@ let currentImage = null;
 let zoomLevel = 1.0;
 const ZOOM_STEP = 0.1;
 
+// --- NEW: Paste Handling Logic ---
+function handlePaste(event, inputElements) {
+    const rawText = event.target.value;
+    
+    // Regex to extract all numbers (including negatives and decimals)
+    // Works with spaces, commas, newlines, or mixed separators
+    const extractedNumbers = rawText.match(/-?\d+(\.\d+)?/g);
+    
+    if (extractedNumbers && extractedNumbers.length >= 4) {
+        inputElements[0].value = parseFloat(extractedNumbers[0]);
+        inputElements[1].value = parseFloat(extractedNumbers[1]);
+        inputElements[2].value = parseFloat(extractedNumbers[2]);
+        inputElements[3].value = parseFloat(extractedNumbers[3]);
+        draw(); // Redraw immediately after pasting
+    }
+}
+
+// Bind paste events
+paste1.addEventListener('input', (e) => handlePaste(e, inputs.slice(0, 4)));
+paste2.addEventListener('input', (e) => handlePaste(e, inputs.slice(4, 8)));
+
+
 // Sidebar Toggle Logic
 openSidebarBtn.addEventListener('click', () => sidebar.classList.remove('collapsed'));
 closeSidebarBtn.addEventListener('click', () => sidebar.classList.add('collapsed'));
@@ -53,11 +77,9 @@ function updateLabels() {
         ['cx (Center X):', 'cy (Center Y):', 'Width:', 'Height:']
     ];
     
-    // Update Box 1
     let activeSet1 = formatSelect1.value === 'xyxy' ? 0 : (formatSelect1.value === 'xywh' ? 1 : 2);
     for (let i = 0; i < 4; i++) labels[i].innerText = labelSets[activeSet1][i];
     
-    // Update Box 2
     let activeSet2 = formatSelect2.value === 'xyxy' ? 0 : (formatSelect2.value === 'xywh' ? 1 : 2);
     for (let i = 0; i < 4; i++) labels[i+4].innerText = labelSets[activeSet2][i];
     
@@ -95,11 +117,9 @@ canvasContainer.addEventListener('wheel', (e) => {
     }
 });
 
-// Sync Box 1 Sliders
+// Sync Sliders
 borderThickness1.addEventListener('input', (e) => { valThickness1.innerText = e.target.value; draw(); });
 fillOpacity1.addEventListener('input', (e) => { valOpacity1.innerText = e.target.value; draw(); });
-
-// Sync Box 2 Sliders
 borderThickness2.addEventListener('input', (e) => { valThickness2.innerText = e.target.value; draw(); });
 fillOpacity2.addEventListener('input', (e) => { valOpacity2.innerText = e.target.value; draw(); });
 
@@ -122,7 +142,6 @@ imageUpload.addEventListener('change', function(e) {
     reader.readAsDataURL(file);
 });
 
-// Bind select changes
 scaleSelect1.addEventListener('change', draw);
 formatSelect1.addEventListener('change', updateLabels);
 scaleSelect2.addEventListener('change', draw);
@@ -194,19 +213,16 @@ function draw() {
     const imgW = currentImage.width;
     const imgH = currentImage.height;
 
-    // Process Box 1
     const isNorm1 = scaleSelect1.value === 'normalized';
     const b1 = inputs.slice(0, 4).map(i => parseFloat(i.value) || 0);
     const box1 = parseBox(b1[0], b1[1], b1[2], b1[3], formatSelect1.value, isNorm1, imgW, imgH);
 
-    // Process Box 2
     const isNorm2 = scaleSelect2.value === 'normalized';
     const b2 = inputs.slice(4, 8).map(i => parseFloat(i.value) || 0);
     const box2 = parseBox(b2[0], b2[1], b2[2], b2[3], formatSelect2.value, isNorm2, imgW, imgH);
 
-    // Draw both boxes using their distinct visual settings
-    drawBox(box1, '#00ff00', borderThickness1.value, fillOpacity1.value); // Green
-    drawBox(box2, '#00bfff', borderThickness2.value, fillOpacity2.value); // Blue
+    drawBox(box1, '#00ff00', borderThickness1.value, fillOpacity1.value);
+    drawBox(box2, '#00bfff', borderThickness2.value, fillOpacity2.value);
 
     const iou = calculateIoU(box1, box2);
     iouValueDisplay.innerText = iou.toFixed(4);
