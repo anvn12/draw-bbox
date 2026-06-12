@@ -1,8 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const imageUpload = document.getElementById('imageUpload');
-const scaleSelect = document.getElementById('scaleSelect');
-const formatSelect = document.getElementById('formatSelect');
 const imageInfo = document.getElementById('imageInfo');
 const canvasContainer = document.getElementById('canvasContainer');
 const iouValueDisplay = document.getElementById('iouValue');
@@ -12,11 +10,21 @@ const sidebar = document.getElementById('sidebar');
 const openSidebarBtn = document.getElementById('openSidebar');
 const closeSidebarBtn = document.getElementById('closeSidebar');
 
-// Style controls
-const borderThicknessInput = document.getElementById('borderThickness');
-const fillOpacityInput = document.getElementById('fillOpacity');
-const valThickness = document.getElementById('valThickness');
-const valOpacity = document.getElementById('valOpacity');
+// Box 1 Config Elements
+const scaleSelect1 = document.getElementById('scaleSelect1');
+const formatSelect1 = document.getElementById('formatSelect1');
+const borderThickness1 = document.getElementById('borderThickness1');
+const fillOpacity1 = document.getElementById('fillOpacity1');
+const valThickness1 = document.getElementById('valThickness1');
+const valOpacity1 = document.getElementById('valOpacity1');
+
+// Box 2 Config Elements
+const scaleSelect2 = document.getElementById('scaleSelect2');
+const formatSelect2 = document.getElementById('formatSelect2');
+const borderThickness2 = document.getElementById('borderThickness2');
+const fillOpacity2 = document.getElementById('fillOpacity2');
+const valThickness2 = document.getElementById('valThickness2');
+const valOpacity2 = document.getElementById('valOpacity2');
 
 // Zoom elements
 const btnZoomIn = document.getElementById('btnZoomIn');
@@ -24,6 +32,7 @@ const btnZoomOut = document.getElementById('btnZoomOut');
 const btnZoomReset = document.getElementById('btnZoomReset');
 const zoomLabel = document.getElementById('zoomLabel');
 
+// Coordinate Inputs
 const inputs = [];
 for (let i = 1; i <= 8; i++) inputs.push(document.getElementById(`val${i}`));
 const labels = [];
@@ -38,15 +47,20 @@ openSidebarBtn.addEventListener('click', () => sidebar.classList.remove('collaps
 closeSidebarBtn.addEventListener('click', () => sidebar.classList.add('collapsed'));
 
 function updateLabels() {
-    const format = formatSelect.value;
     const labelSets = [
         ['x1 (min X):', 'y1 (min Y):', 'x2 (max X):', 'y2 (max Y):'],
         ['x (top-left):', 'y (top-left):', 'Width:', 'Height:'],
         ['cx (Center X):', 'cy (Center Y):', 'Width:', 'Height:']
     ];
-    let activeSet = format === 'xyxy' ? 0 : (format === 'xywh' ? 1 : 2);
-    for (let i = 0; i < 4; i++) labels[i].innerText = labelSets[activeSet][i];
-    for (let i = 0; i < 4; i++) labels[i+4].innerText = labelSets[activeSet][i];
+    
+    // Update Box 1
+    let activeSet1 = formatSelect1.value === 'xyxy' ? 0 : (formatSelect1.value === 'xywh' ? 1 : 2);
+    for (let i = 0; i < 4; i++) labels[i].innerText = labelSets[activeSet1][i];
+    
+    // Update Box 2
+    let activeSet2 = formatSelect2.value === 'xyxy' ? 0 : (formatSelect2.value === 'xywh' ? 1 : 2);
+    for (let i = 0; i < 4; i++) labels[i+4].innerText = labelSets[activeSet2][i];
+    
     draw();
 }
 
@@ -81,15 +95,13 @@ canvasContainer.addEventListener('wheel', (e) => {
     }
 });
 
-borderThicknessInput.addEventListener('input', (e) => {
-    valThickness.innerText = e.target.value;
-    draw();
-});
+// Sync Box 1 Sliders
+borderThickness1.addEventListener('input', (e) => { valThickness1.innerText = e.target.value; draw(); });
+fillOpacity1.addEventListener('input', (e) => { valOpacity1.innerText = e.target.value; draw(); });
 
-fillOpacityInput.addEventListener('input', (e) => {
-    valOpacity.innerText = e.target.value;
-    draw();
-});
+// Sync Box 2 Sliders
+borderThickness2.addEventListener('input', (e) => { valThickness2.innerText = e.target.value; draw(); });
+fillOpacity2.addEventListener('input', (e) => { valOpacity2.innerText = e.target.value; draw(); });
 
 imageUpload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -110,8 +122,12 @@ imageUpload.addEventListener('change', function(e) {
     reader.readAsDataURL(file);
 });
 
-scaleSelect.addEventListener('change', draw);
-formatSelect.addEventListener('change', updateLabels);
+// Bind select changes
+scaleSelect1.addEventListener('change', draw);
+formatSelect1.addEventListener('change', updateLabels);
+scaleSelect2.addEventListener('change', draw);
+formatSelect2.addEventListener('change', updateLabels);
+
 inputs.forEach(input => input.addEventListener('input', draw));
 
 // --- Core Logic & Math ---
@@ -153,22 +169,17 @@ function calculateIoU(box1, box2) {
     return interArea / unionArea;
 }
 
-function drawBox(box, colorHex) {
-    // Read dynamic user settings
-    const thickness = parseFloat(borderThicknessInput.value);
-    const opacity = parseFloat(fillOpacityInput.value);
-
+function drawBox(box, colorHex, thickness, opacity) {
     ctx.beginPath();
     ctx.rect(box.x, box.y, box.w, box.h);
-    ctx.lineWidth = thickness;
+    ctx.lineWidth = parseFloat(thickness);
     ctx.strokeStyle = colorHex;
     ctx.stroke();
     
-    // Parse hex to inject dynamic opacity
     const r = parseInt(colorHex.slice(1, 3), 16);
     const g = parseInt(colorHex.slice(3, 5), 16);
     const b = parseInt(colorHex.slice(5, 7), 16);
-    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`; 
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${parseFloat(opacity)})`; 
     ctx.fill();
 }
 
@@ -180,19 +191,22 @@ function draw() {
 
     ctx.drawImage(currentImage, 0, 0);
 
-    const isNormalized = scaleSelect.value === 'normalized';
-    const format = formatSelect.value;
     const imgW = currentImage.width;
     const imgH = currentImage.height;
 
+    // Process Box 1
+    const isNorm1 = scaleSelect1.value === 'normalized';
     const b1 = inputs.slice(0, 4).map(i => parseFloat(i.value) || 0);
-    const box1 = parseBox(b1[0], b1[1], b1[2], b1[3], format, isNormalized, imgW, imgH);
+    const box1 = parseBox(b1[0], b1[1], b1[2], b1[3], formatSelect1.value, isNorm1, imgW, imgH);
 
+    // Process Box 2
+    const isNorm2 = scaleSelect2.value === 'normalized';
     const b2 = inputs.slice(4, 8).map(i => parseFloat(i.value) || 0);
-    const box2 = parseBox(b2[0], b2[1], b2[2], b2[3], format, isNormalized, imgW, imgH);
+    const box2 = parseBox(b2[0], b2[1], b2[2], b2[3], formatSelect2.value, isNorm2, imgW, imgH);
 
-    drawBox(box1, '#00ff00'); // Green
-    drawBox(box2, '#00bfff'); // Deep Sky Blue
+    // Draw both boxes using their distinct visual settings
+    drawBox(box1, '#00ff00', borderThickness1.value, fillOpacity1.value); // Green
+    drawBox(box2, '#00bfff', borderThickness2.value, fillOpacity2.value); // Blue
 
     const iou = calculateIoU(box1, box2);
     iouValueDisplay.innerText = iou.toFixed(4);

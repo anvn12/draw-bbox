@@ -33,37 +33,33 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Scale (Applies to both):</label>
-                <select id="scaleSelect">
-                    <option value="absolute">Absolute (Pixels)</option>
-                    <option value="normalized">Normalized (0-1)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Format (Applies to both):</label>
-                <select id="formatSelect">
-                    <option value="xyxy">xyxy (MinMax)</option>
-                    <option value="xywh">xywh (Top-Left)</option>
-                    <option value="cxcywh">cxcywh (Center)</option>
-                </select>
-            </div>
-
-            <div class="style-controls">
-                <div class="form-group">
-                    <label>Border Thickness: <span id="valThickness">2</span>px</label>
-                    <input type="range" id="borderThickness" min="1" max="15" value="2">
-                </div>
-                <div class="form-group">
-                    <label>Fill Opacity: <span id="valOpacity">0.2</span></label>
-                    <input type="range" id="fillOpacity" min="0" max="1" step="0.05" value="0.2">
-                </div>
-            </div>
-
             <hr>
 
-            <h3 class="box-title green-text">Box 1 (Ground Truth / Green)</h3>
+            <h3 class="box-title green-text">Box 1 (Ground Truth)</h3>
+            <div class="box-config">
+                <div class="config-row-2">
+                    <select id="scaleSelect1">
+                        <option value="absolute">Absolute (Pixels)</option>
+                        <option value="normalized">Normalized (0-1)</option>
+                    </select>
+                    <select id="formatSelect1">
+                        <option value="xyxy">xyxy</option>
+                        <option value="xywh">xywh</option>
+                        <option value="cxcywh">cxcywh (Center)</option>
+                    </select>
+                </div>
+                <div class="style-sliders">
+                    <div class="slider-group">
+                        <label>Border: <span id="valThickness1">2</span>px</label>
+                        <input type="range" id="borderThickness1" min="1" max="15" value="2">
+                    </div>
+                    <div class="slider-group">
+                        <label>Fill: <span id="valOpacity1">0.2</span></label>
+                        <input type="range" id="fillOpacity1" min="0" max="1" step="0.05" value="0.2">
+                    </div>
+                </div>
+            </div>
+            
             <div class="coord-inputs">
                 <div class="form-group"><label id="lbl1">x1:</label><input type="number" id="val1" step="any" value="0"></div>
                 <div class="form-group"><label id="lbl2">y1:</label><input type="number" id="val2" step="any" value="0"></div>
@@ -73,7 +69,31 @@
 
             <hr>
 
-            <h3 class="box-title blue-text">Box 2 (Prediction / Blue)</h3>
+            <h3 class="box-title blue-text">Box 2 (Prediction)</h3>
+            <div class="box-config">
+                <div class="config-row-2">
+                    <select id="scaleSelect2">
+                        <option value="absolute">Absolute (Pixels)</option>
+                        <option value="normalized">Normalized (0-1)</option>
+                    </select>
+                    <select id="formatSelect2">
+                        <option value="xyxy">xyxy</option>
+                        <option value="xywh">xywh</option>
+                        <option value="cxcywh">cxcywh (Center)</option>
+                    </select>
+                </div>
+                <div class="style-sliders">
+                    <div class="slider-group">
+                        <label>Border: <span id="valThickness2">2</span>px</label>
+                        <input type="range" id="borderThickness2" min="1" max="15" value="2">
+                    </div>
+                    <div class="slider-group">
+                        <label>Fill: <span id="valOpacity2">0.2</span></label>
+                        <input type="range" id="fillOpacity2" min="0" max="1" step="0.05" value="0.2">
+                    </div>
+                </div>
+            </div>
+
             <div class="coord-inputs">
                 <div class="form-group"><label id="lbl5">x1:</label><input type="number" id="val5" step="any" value="0"></div>
                 <div class="form-group"><label id="lbl6">y1:</label><input type="number" id="val6" step="any" value="0"></div>
