@@ -1,2 +1,2 @@
-# draw-bbox
-To draw bbox of an image
+# BBox Visualizer
+To draw bbox of an image and compare IoU
