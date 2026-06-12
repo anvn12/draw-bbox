@@ -55,7 +55,8 @@ h2 { margin: 0; font-size: 1.5rem; }
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    /* CHANGED: Increased top padding from 20px to 70px to clear the floating button */
+    padding: 70px 20px 20px 20px;
     background-color: #e0e0e0;
     overflow: hidden;
     position: relative;
